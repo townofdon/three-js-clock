@@ -7,11 +7,11 @@ const DEBUG = false;
 let camera, scene, renderer, cube, spotLight, controls, lightHelper, shadowCameraHelper;
 
 const clock = {};
-const clockYOffset = 1;
+const clockYOffset = 0;
 
 function setClockBackface() {
-  const radiusTop = 4;
-  const radiusBottom = 4;
+  const radiusTop = 3.8;
+  const radiusBottom = 3.8;
   const height = 0.1;
   const radialSegments = 50;
   const geometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, radialSegments);
@@ -171,38 +171,39 @@ function setClockMarkings() {
 
 function updateClockTime() {
   const date = new Date();
-  const hours = date.getHours() % 12;
-  const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
+  const milliseconds = date.getMilliseconds();
+  const seconds = date.getSeconds() + milliseconds / 1000;
+  const minutes = date.getMinutes() + seconds / 60;
+  const hours = date.getHours() % 12 + minutes / 60;
   const MIDNIGHT = Math.PI * -0.5;
-  clock.hourHand.rotation.z = MIDNIGHT - Math.PI * hours / 6;
-  clock.minuteHand.rotation.z = MIDNIGHT - Math.PI * minutes / 30;
-  clock.secondHand.rotation.z = MIDNIGHT - Math.PI * seconds / 30;
+  clock.hourHand.rotation.z = MIDNIGHT - Math.PI * 2 * hours / 12;
+  clock.minuteHand.rotation.z = MIDNIGHT - Math.PI * 2 * minutes / 60;
+  clock.secondHand.rotation.z = MIDNIGHT - Math.PI * 2 * seconds / 60;
 }
 
 function init() {
-	scene = new THREE.Scene();
+  scene = new THREE.Scene();
 
   // camera
 
-	camera = new THREE.PerspectiveCamera(
-		75,
-		window.innerWidth / window.innerHeight,
-		0.1,
-		1000
-	);
-	camera.position.z = 2;
-	camera.position.y = -3;
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.z = 6;
+  camera.position.y = 0;
 
   // renderer
 
-	renderer = new THREE.WebGLRenderer({ antialias: true });
-	renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-	document.body.appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
 
   // Controls
 
@@ -211,10 +212,10 @@ function init() {
   controls.maxDistance = 50;
   controls.enablePan = false;
 
-	// Add texture
-	// const texture = new THREE.TextureLoader().load('textures/crate.gif');
-	// Create material with texture
-	// const material = new THREE.MeshBasicMaterial({ map: texture });
+  // Add texture
+  // const texture = new THREE.TextureLoader().load('textures/crate.gif');
+  // Create material with texture
+  // const material = new THREE.MeshBasicMaterial({ map: texture });
 
   // ground
 
@@ -247,27 +248,18 @@ function init() {
     scene.add( marking );
   });
   updateClockTime();
-  setInterval(updateClockTime, 1000);
 
   // ambient light
 
   const ambient = new THREE.AmbientLight( 0xffffff, 0.3 );
-	scene.add( ambient );
+  scene.add( ambient );
 
   // spotlight
 
   spotLight = new THREE.SpotLight(0xffffff, 1);
-  // spotLight.position.set( 0, 10, 0 );
-  // spotLight.rotation.x -= Math.PI * 0.5;
-  // spotLight.castShadow = false;
-  // spotLight.shadow.mapSize.width = 1024;
-  // spotLight.shadow.mapSize.height = 1024;
-  // spotLight.shadow.camera.near = 500;
-  // spotLight.shadow.camera.far = 4000;
-  // spotLight.shadow.camera.fov = 30;
   spotLight.position.set( 15, 40, 35 );
   spotLight.angle = Math.PI / 4;
-  spotLight.penumbra = 0.1;
+  spotLight.penumbra = 0.01;
   spotLight.decay = 2;
   spotLight.distance = 200;
   spotLight.castShadow = true;
@@ -275,7 +267,7 @@ function init() {
   spotLight.shadow.mapSize.height = 512;
   spotLight.shadow.camera.near = 10;
   spotLight.shadow.camera.far = 200;
-  spotLight.shadow.focus = 1;
+  spotLight.shadow.focus = 0.1;
   scene.add( spotLight );
 
   // light helper
@@ -295,26 +287,24 @@ function init() {
 
 // Draw the scene every time the screen is refreshed
 function render() {
-	requestAnimationFrame(render);
-
-	// Rotate cube (Change values to change speed)
-	// cube.rotation.y += 0.01;
-
   if (DEBUG) {
     lightHelper.update();
     shadowCameraHelper.update();
   }
 
-	renderer.render(scene, camera);
+  updateClockTime();
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(render);
 }
 
 function onWindowResize() {
-	// Camera frustum aspect ratio
-	camera.aspect = window.innerWidth / window.innerHeight;
-	// After making changes to aspect
-	camera.updateProjectionMatrix();
-	// Reset size
-	renderer.setSize(window.innerWidth, window.innerHeight);
+  // Camera frustum aspect ratio
+  camera.aspect = window.innerWidth / window.innerHeight;
+  // After making changes to aspect
+  camera.updateProjectionMatrix();
+  // Reset size
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 window.addEventListener('resize', onWindowResize, false);

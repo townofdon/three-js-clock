@@ -20,6 +20,8 @@ function setClockBackface() {
   // rotate towards the camera
   mesh.rotation.x += Math.PI * 0.5;
   mesh.position.y += clockYOffset;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
   clock.backface = mesh;
 }
 
@@ -42,6 +44,7 @@ function setClockFrame() {
   const material = new THREE.MeshPhongMaterial({ color: 0x050505, dithering: true });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.y += clockYOffset;
+  mesh.castShadow = true;
   clock.frame = mesh;
 }
 
@@ -80,6 +83,7 @@ function setClockHourHand() {
   mesh.position.z += 0.2;
   mesh.position.y += clockYOffset;
   mesh.rotation.z -= Math.PI * 0.5;
+  mesh.castShadow = true;
   clock.hourHand = mesh;
 }
 
@@ -104,6 +108,7 @@ function setClockMinuteHand() {
   mesh.position.z += 0.25;
   mesh.position.y += clockYOffset;
   mesh.rotation.z -= Math.PI * 0.75;
+  mesh.castShadow = true;
   clock.minuteHand = mesh;
 }
 
@@ -128,6 +133,7 @@ function setClockSecondHand() {
   mesh.position.z += 0.35;
   mesh.position.y += clockYOffset;
   mesh.rotation.z -= Math.PI * 1;
+  mesh.castShadow = true;
   clock.secondHand = mesh;
 }
 
@@ -163,6 +169,17 @@ function setClockMarkings() {
   }
 }
 
+function updateClockTime() {
+  const date = new Date();
+  const hours = date.getHours() % 12;
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const MIDNIGHT = Math.PI * -0.5;
+  clock.hourHand.rotation.z = MIDNIGHT - Math.PI * hours / 6;
+  clock.minuteHand.rotation.z = MIDNIGHT - Math.PI * minutes / 30;
+  clock.secondHand.rotation.z = MIDNIGHT - Math.PI * seconds / 30;
+}
+
 function init() {
 	scene = new THREE.Scene();
 
@@ -174,7 +191,7 @@ function init() {
 		0.1,
 		1000
 	);
-	camera.position.z = 5;
+	camera.position.z = 2;
 	camera.position.y = -3;
 
   // renderer
@@ -229,10 +246,12 @@ function init() {
   clock.markings.forEach(marking => {
     scene.add( marking );
   });
+  updateClockTime();
+  setInterval(updateClockTime, 1000);
 
   // ambient light
 
-  const ambient = new THREE.AmbientLight( 0xffffff, 0.1 );
+  const ambient = new THREE.AmbientLight( 0xffffff, 0.3 );
 	scene.add( ambient );
 
   // spotlight

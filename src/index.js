@@ -46,8 +46,8 @@ function setClockFrame() {
 }
 
 function setClockPeg() {
-  const radiusTop = 0.1;
-  const radiusBottom = 0.1;
+  const radiusTop = 0.09;
+  const radiusBottom = 0.09;
   const height = 0.18;
   const radialSegments = 25;
   const geometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, radialSegments);
@@ -131,6 +131,38 @@ function setClockSecondHand() {
   clock.secondHand = mesh;
 }
 
+function addClockMarking(radians = 0) {
+  const offsetX = 3 * Math.sin(radians);
+  const offsetY = 3 * Math.cos(radians);
+  const length = 0.15;
+  const shape = new THREE.Shape([
+    new THREE.Vector2( -0.05, length ),
+    new THREE.Vector2( 0.05, length ),
+    new THREE.Vector2( 0.05, -length ),
+    new THREE.Vector2( -0.05, -length ),
+  ]);
+  const extrudeSettings = {
+    depth: 0.02,
+    bevelEnabled: false,
+    steps: 2,
+  };
+  const geometry =  new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  const material = new THREE.MeshPhongMaterial({ color: 0x202020, dithering: true });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.x += offsetX;
+  mesh.position.y += offsetY + clockYOffset;
+  mesh.position.z += 0.04;
+  mesh.rotation.z -= radians;
+  if (!clock.markings) clock.markings = [];
+  clock.markings.push(mesh);
+}
+
+function setClockMarkings() {
+  for (let i = 12; i > 0; i--) {
+    addClockMarking(Math.PI * i / 6);
+  }
+}
+
 function init() {
 	scene = new THREE.Scene();
 
@@ -187,12 +219,16 @@ function init() {
   setClockHourHand();
   setClockMinuteHand();
   setClockSecondHand();
+  setClockMarkings();
   scene.add( clock.backface );
   scene.add( clock.frame );
   scene.add( clock.peg );
   scene.add( clock.hourHand );
   scene.add( clock.minuteHand );
   scene.add( clock.secondHand );
+  clock.markings.forEach(marking => {
+    scene.add( marking );
+  });
 
   // ambient light
 

@@ -48,7 +48,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      title: 'Three.js Clock',
     }),
   ],
   output: {

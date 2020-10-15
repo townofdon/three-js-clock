@@ -172,6 +172,7 @@ function setClockMarkings() {
 function updateClockTime() {
   const date = new Date();
   const milliseconds = date.getMilliseconds();
+  // including smaller time units allows smooth hand movements
   const seconds = date.getSeconds() + milliseconds / 1000;
   const minutes = date.getMinutes() + seconds / 60;
   const hours = date.getHours() % 12 + minutes / 60;
@@ -211,11 +212,6 @@ function init() {
   controls.minDistance = 3;
   controls.maxDistance = 50;
   controls.enablePan = false;
-
-  // Add texture
-  // const texture = new THREE.TextureLoader().load('textures/crate.gif');
-  // Create material with texture
-  // const material = new THREE.MeshBasicMaterial({ map: texture });
 
   // ground
 

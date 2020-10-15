@@ -7,16 +7,16 @@ const DEBUG = false;
 let camera, scene, renderer, cube, spotLight, controls, lightHelper, shadowCameraHelper;
 
 const clock = {};
-const clockMaterial = new THREE.MeshPhongMaterial({ color: 0xb0a780, dithering: true });
 const clockYOffset = 1;
 
 function setClockBackface() {
-  const radiusTop = 4;  
-  const radiusBottom = 4;  
+  const radiusTop = 4;
+  const radiusBottom = 4;
   const height = 0.1;
-  const radialSegments = 50;  
+  const radialSegments = 50;
   const geometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, radialSegments);
-  const mesh = new THREE.Mesh(geometry, clockMaterial);
+  const material = new THREE.MeshPhongMaterial({ color: 0xb0a780, dithering: true });
+  const mesh = new THREE.Mesh(geometry, material);
   // rotate towards the camera
   mesh.rotation.x += Math.PI * 0.5;
   mesh.position.y += clockYOffset;
@@ -45,14 +45,29 @@ function setClockFrame() {
   clock.frame = mesh;
 }
 
+function setClockPeg() {
+  const radiusTop = 0.1;
+  const radiusBottom = 0.1;
+  const height = 0.18;
+  const radialSegments = 25;
+  const geometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, radialSegments);
+  const material = new THREE.MeshPhongMaterial({ color: 0x353025, dithering: true });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.rotation.x += Math.PI * 0.5;
+  mesh.position.z += 0.1;
+  mesh.position.y += clockYOffset;
+  clock.peg = mesh;
+}
+
 function setClockHourHand() {
+  const width = 0.1;
   const shape = new THREE.Shape([
-    new THREE.Vector2( 0, 0.20 ),
-    new THREE.Vector2( 0.25, 0.15 ),
-    new THREE.Vector2( 0.25, -0.15 ),
-    new THREE.Vector2( 0, -0.20 ),
-    new THREE.Vector2( -2, -0.05 ),
-    new THREE.Vector2( -2, 0.05 ),
+    new THREE.Vector2( 0, width ),
+    new THREE.Vector2( 0.25, width ),
+    new THREE.Vector2( 0.25, -width ),
+    new THREE.Vector2( 0, -width ),
+    new THREE.Vector2( -2, -width ),
+    new THREE.Vector2( -2, width ),
   ]);
   const extrudeSettings = {
     depth: 0.1,
@@ -69,13 +84,14 @@ function setClockHourHand() {
 }
 
 function setClockMinuteHand() {
+  const width = 0.075;
   const shape = new THREE.Shape([
-    new THREE.Vector2( 0, 0.15 ),
-    new THREE.Vector2( 0.25, 0.10 ),
-    new THREE.Vector2( 0.25, -0.10 ),
-    new THREE.Vector2( 0, -0.15 ),
-    new THREE.Vector2( -3, -0.05 ),
-    new THREE.Vector2( -3, 0.05 ),
+    new THREE.Vector2( 0, width ),
+    new THREE.Vector2( 0.25, width ),
+    new THREE.Vector2( 0.25, -width ),
+    new THREE.Vector2( 0, -width ),
+    new THREE.Vector2( -3, -width ),
+    new THREE.Vector2( -3, width ),
   ]);
   const extrudeSettings = {
     depth: 0.1,
@@ -92,16 +108,17 @@ function setClockMinuteHand() {
 }
 
 function setClockSecondHand() {
+  const width = 0.03;
   const shape = new THREE.Shape([
-    new THREE.Vector2( 0, 0.05 ),
-    new THREE.Vector2( 0.75, 0.03 ),
-    new THREE.Vector2( 0.75, -0.03 ),
-    new THREE.Vector2( 0, -0.05 ),
-    new THREE.Vector2( -3, -0.01 ),
-    new THREE.Vector2( -3, 0.01 ),
+    new THREE.Vector2( 0, width ),
+    new THREE.Vector2( 0.75, width ),
+    new THREE.Vector2( 0.75, -width ),
+    new THREE.Vector2( 0, -width ),
+    new THREE.Vector2( -3, -width ),
+    new THREE.Vector2( -3, width ),
   ]);
   const extrudeSettings = {
-    depth: 0.05,
+    depth: 0.02,
     bevelEnabled: false,
     steps: 5,
   };
@@ -138,6 +155,13 @@ function init() {
 
 	document.body.appendChild(renderer.domElement);
 
+  // Controls
+
+  controls = new OrbitControls( camera, renderer.domElement );
+  controls.minDistance = 3;
+  controls.maxDistance = 50;
+  controls.enablePan = false;
+
 	// Add texture
 	// const texture = new THREE.TextureLoader().load('textures/crate.gif');
 	// Create material with texture
@@ -159,11 +183,13 @@ function init() {
 
   setClockBackface();
   setClockFrame();
+  setClockPeg();
   setClockHourHand();
   setClockMinuteHand();
   setClockSecondHand();
   scene.add( clock.backface );
   scene.add( clock.frame );
+  scene.add( clock.peg );
   scene.add( clock.hourHand );
   scene.add( clock.minuteHand );
   scene.add( clock.secondHand );
@@ -210,14 +236,6 @@ function init() {
     shadowCameraHelper = new THREE.CameraHelper( spotLight.shadow.camera );
     scene.add( shadowCameraHelper );
   }
-
-  // Controls
-
-  controls = new OrbitControls( camera, renderer.domElement );
-  controls.minDistance = 5;
-  controls.maxDistance = 50;
-  controls.enablePan = false;
-
 }
 
 // Draw the scene every time the screen is refreshed

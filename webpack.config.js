@@ -4,56 +4,51 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   entry: {
-    app: './src/index.js',
+    app: "./src/index.js",
   },
-  devtool: 'inline-source-map',
+  devtool: "inline-source-map",
   module: {
     rules: [
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, 'src'),
-        use: [
-          'style-loader',
-          'css-loader',
-        ],
+        include: path.resolve(__dirname, "src"),
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        include: path.resolve(__dirname, 'src'),
-        use: [
-          'file-loader',
-        ],
+        include: path.resolve(__dirname, "src"),
+        use: ["file-loader"],
       },
       {
         test: /\.tsx?$/,
         use: [
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
-              transpileOnly: true
+              transpileOnly: true,
             },
           },
         ],
-        include: path.resolve(__dirname, 'src'),
+        include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: [".tsx", ".ts", ".js"],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
-      title: 'Three.js Clock',
+      title: "Three.js Clock",
     }),
   ],
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    filename: "[name].bundle.js",
+    path: path.resolve(__dirname, "build"),
+    publicPath: "/",
   },
 };

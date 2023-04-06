@@ -6,7 +6,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const meta = {
   title: "Three.js Clock",
   desc: "A 3D analog clock made entirely in Three.js 🕰",
-  image: "https://townofdon.github.io/three-js-clock/demo.gif",
+  image:
+    "https://repository-images.githubusercontent.com/304176239/13cf3b00-0e9b-11eb-88d0-630cebf776f7",
   url: "https://townofdon.github.io/three-js-clock/",
 };
 

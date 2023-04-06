@@ -8,7 +8,7 @@ A simple analog clock made from [Three.js](https://threejs.org/).
 
 ```
 yarn install
-yarn start
+yarn dev
 ```
 
 Then open http://localhost:8080 to see what time it is.

@@ -2,6 +2,8 @@
 
 A simple analog clock made from [Three.js](https://threejs.org/).
 
+[See demo](https://townofdon.github.io/three-js-clock/)
+
 ![Demo of Three.js clock](./demo.gif)
 
 ## Installation

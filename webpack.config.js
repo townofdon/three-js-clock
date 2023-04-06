@@ -4,8 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const meta = {
-  title: "Demo - Simple Three.js Clock",
-  desc: "This is just a demo showcasing a simple 3D clock made using Three.js.",
+  title: "Three.js Clock",
+  desc: "A 3D analog clock made entirely in Three.js 🕰",
   image: "https://townofdon.github.io/three-js-clock/demo.gif",
   url: "https://townofdon.github.io/three-js-clock/",
 };

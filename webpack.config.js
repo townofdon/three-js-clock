@@ -49,6 +49,6 @@ module.exports = {
   output: {
     filename: "[name]_bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/",
+    publicPath: "/three-js-clock/",
   },
 };
